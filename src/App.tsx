@@ -6,11 +6,11 @@ import Layout from "ui/components/Layout";
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      <Layout>
-        <Router>
+      <Router>
+        <Layout>
           <RouterSwitch />
-        </Router>
-      </Layout>
+        </Layout>
+      </Router>
     </ChakraProvider>
   );
 }

@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Container,
   Heading,
   HStack,
   Input,
@@ -12,7 +13,7 @@ import Card from "ui/components/Card";
 
 function HomeView() {
   return (
-    <Box p={3}>
+    <Container maxW="container.xl" py={3}>
       <Heading pb={3}>Welcome MovieLib!</Heading>
       <Text pb={3}>Enter keyword to start searching your favorite movie.</Text>
       <HStack spacing={3} pb={6}>
@@ -33,7 +34,7 @@ function HomeView() {
           )}
         </Box>
       ) : null}
-    </Box>
+    </Container>
   );
 
   function _buildResult() {
