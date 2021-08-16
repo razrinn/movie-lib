@@ -9,16 +9,37 @@ import {
   Tag,
   Text,
 } from "@chakra-ui/react";
+import { getMovieDetail } from "core/stores/actions/movieActions";
+import { IMovieState } from "core/stores/reducers/movieReducer";
+import { RootState } from "core/stores/store";
 import React from "react";
+import { useEffect } from "react";
 import { FaStar } from "react-icons/fa";
+import { connect, ConnectedProps, MapStateToProps } from "react-redux";
 import { useParams } from "react-router-dom";
 import NotFoundView from "./NotFoundView";
 
-function MovieDetailView() {
+const mapStateToProps: MapStateToProps<IMovieState, {}, RootState> = (
+  state
+) => ({ ...state.movie });
+
+const mapDispatchToProps = {
+  getMovieDetail,
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function MovieDetailView({ data, getMovieDetail }: PropsFromRedux) {
   const { id } = useParams<{ id: string }>();
-  if (id !== "tt1285016") {
-    return <NotFoundView />;
-  }
+  // if (id !== "tt1285016") {
+  //   return <NotFoundView />;
+  // }
+  useEffect(() => {
+    getMovieDetail(id);
+  }, [getMovieDetail, id]);
+  console.log(data);
   return (
     <Container maxW="container.xl">
       <Box py={3}>
@@ -42,7 +63,7 @@ function MovieDetailView() {
             <Text textTransform="capitalize">movie, 120 min</Text>
             <HStack>
               {["Biography", "Drama"].map((item) => (
-                <Tag>{item}</Tag>
+                <Tag key={item}>{item}</Tag>
               ))}
             </HStack>
             <HStack>
@@ -98,7 +119,7 @@ function MovieDetailView() {
           <Text>Won 3 Oscars. 172 wins & 186 nominations total</Text>
           <HStack>
             {["Internet Movie Database", "Rotten Tomatoes"].map((item) => (
-              <Tag>
+              <Tag key={item}>
                 {item}: {"7.7/10"}
               </Tag>
             ))}
@@ -109,4 +130,4 @@ function MovieDetailView() {
   );
 }
 
-export default MovieDetailView;
+export default connector(MovieDetailView);

@@ -16,9 +16,15 @@ import {
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 
-function Card() {
-  //   const { product, summary, longLine } = props;
+interface Props {
+  id: string;
+  title: string;
+  year: string;
+  type: string;
+  imageUrl: string;
+}
 
+function Card({ id, imageUrl, title, type, year }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -28,10 +34,8 @@ function Card() {
           <Image
             onClick={() => onOpen()}
             borderRadius={4}
-            src={
-              "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_SX300.jpg"
-            }
-            alt="Woman paying for a purchase"
+            src={imageUrl}
+            alt={title}
             objectFit="cover"
           />
         </AspectRatio>
@@ -39,7 +43,7 @@ function Card() {
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              {"The Social Network"} ({"2010"})
+              {title} ({year})
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
@@ -47,10 +51,8 @@ function Card() {
                 <Image
                   onClick={() => onOpen()}
                   borderRadius={4}
-                  src={
-                    "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_SX300.jpg"
-                  }
-                  alt="Woman paying for a purchase"
+                  src={imageUrl}
+                  alt={title}
                   objectFit="cover"
                 />
               </AspectRatio>
@@ -61,13 +63,13 @@ function Card() {
           as={RouterLink}
           my={1}
           display="block"
-          to="/tt1285016"
+          to={`/${id}`}
           textDecoration="none"
         >
           <Text fontWeight="bold" fontSize="lg" color="blue.200">
-            {"The Social Network"} ({"2010"})
+            {title} ({year})
           </Text>
-          <Text textTransform="capitalize">{"movie"}</Text>
+          <Text textTransform="capitalize">{type}</Text>
         </Link>
       </Stack>
     </Box>
