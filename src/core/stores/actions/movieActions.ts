@@ -1,4 +1,3 @@
-import { exception } from "console";
 import axiosInstance from "core/api/config";
 import { ThunkDispatch } from "redux-thunk";
 import { IMovieAction, IMovieState } from "../reducers/movieReducer";
@@ -22,7 +21,7 @@ export const getMovieDetail =
         },
       });
       if (res.data.Error) {
-        throw exception;
+        throw Error;
       }
       dispatch({
         type: FETCH_MOVIE_DETAILS_FINISHED,

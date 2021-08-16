@@ -9,6 +9,9 @@ function RouterSwitch() {
       <Route exact path="/">
         <HomeView />
       </Route>
+      <Route path="/404">
+        <NotFoundView />
+      </Route>
       <Route exact path="/:id">
         <MovieDetailView />
       </Route>

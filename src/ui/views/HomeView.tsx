@@ -11,10 +11,7 @@ import {
 } from "@chakra-ui/react";
 import useDebounce from "core/hooks/useDebounce";
 import { getMovies } from "core/stores/actions/moviesActions";
-import {
-  IMoviesState,
-  IMovieSummary,
-} from "core/stores/reducers/moviesReducer";
+import { IMoviesState } from "core/stores/reducers/moviesReducer";
 import { RootState } from "core/stores/store";
 import React, { useState } from "react";
 import { connect, ConnectedProps, MapStateToProps } from "react-redux";
@@ -133,7 +130,7 @@ function HomeView({ data, isLoading, getMovies }: PropsFromRedux) {
         }}
         spacing={3}
       >
-        {[...Array(6)].map((item) => (
+        {[1, 2, 3, 4, 5, 6].map((item) => (
           <Skeleton key={item} height={{ base: 300, md: 360 }} />
         ))}
       </SimpleGrid>

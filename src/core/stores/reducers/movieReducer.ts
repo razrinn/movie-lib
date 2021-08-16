@@ -27,6 +27,7 @@ export interface IMovieDetail {
   Production: string;
   Poster: string;
   Ratings: IRating[];
+  imdbRating: String;
 }
 
 export interface IMovieState {

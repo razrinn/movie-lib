@@ -5,6 +5,7 @@ import {
   Heading,
   HStack,
   Image,
+  Skeleton,
   Stack,
   Tag,
   Text,
@@ -16,8 +17,7 @@ import React from "react";
 import { useEffect } from "react";
 import { FaStar } from "react-icons/fa";
 import { connect, ConnectedProps, MapStateToProps } from "react-redux";
-import { useParams } from "react-router-dom";
-import NotFoundView from "./NotFoundView";
+import { Redirect, useParams } from "react-router-dom";
 
 const mapStateToProps: MapStateToProps<IMovieState, {}, RootState> = (
   state
@@ -31,103 +31,126 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-function MovieDetailView({ data, getMovieDetail }: PropsFromRedux) {
+function MovieDetailView({
+  data,
+  isError,
+  isLoading,
+  getMovieDetail,
+}: PropsFromRedux) {
   const { id } = useParams<{ id: string }>();
-  // if (id !== "tt1285016") {
-  //   return <NotFoundView />;
-  // }
+
   useEffect(() => {
     getMovieDetail(id);
   }, [getMovieDetail, id]);
-  console.log(data);
+
+  if (isLoading) {
+    return _buildSkeleton();
+  }
+
+  if (isError) {
+    return <Redirect to="/404" />;
+  }
+
   return (
     <Container maxW="container.xl">
       <Box py={3}>
         <Stack spacing={6} direction={{ base: "column", md: "row" }} pb={6}>
           <Image
             borderRadius={4}
-            src={
-              "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_SX300.jpg"
-            }
+            src={data?.Poster}
             maxWidth="256px"
-            alt="Woman paying for a purchase"
+            alt={data?.Title}
           />
           <Stack>
             <Heading>
-              {"The Social Network"} ({"2010"})
+              {data?.Title} ({data?.Year})
             </Heading>
             <HStack spacing={3}>
               <FaStar color="#f5c518" />
-              <Text>{"7.7"}/10</Text>
+              <Text>{data?.imdbRating}/10</Text>
             </HStack>
-            <Text textTransform="capitalize">movie, 120 min</Text>
+            <Text textTransform="capitalize">
+              {data?.Type}, {data?.Runtime}
+            </Text>
             <HStack>
-              {["Biography", "Drama"].map((item) => (
+              {data?.Genre.split(", ").map((item) => (
                 <Tag key={item}>{item}</Tag>
               ))}
             </HStack>
             <HStack>
               <Text fontWeight="bold">Director:</Text>
-              <Text>David Fincher</Text>
+              <Text>{data?.Director}</Text>
             </HStack>
             <HStack>
               <Text fontWeight="bold">Writer(s): </Text>
-              <Text>Aaron Sorkin, Ben Mezrich</Text>
+              <Text>{data?.Writer}</Text>
             </HStack>
             <HStack alignItems="start" textAlign="left">
               <Text fontWeight="bold">Stars: </Text>
-              <Text>Jesse Eisenberg, Andrew Garfield, Justin Timberlake</Text>
+              <Text>{data?.Actors}</Text>
             </HStack>
             <HStack alignItems="start" textAlign="left">
               <Text fontWeight="bold">Released: </Text>
-              <Text>01 Oct 2010</Text>
+              <Text>{data?.Released}</Text>
             </HStack>
             <HStack alignItems="start" textAlign="left">
               <Text fontWeight="bold">Language(s): </Text>
-              <Text>English, French</Text>
+              <Text>{data?.Language}</Text>
             </HStack>
             <HStack alignItems="start" textAlign="left">
               <Text fontWeight="bold">Country: </Text>
-              <Text>United States</Text>
+              <Text>{data?.Country}</Text>
             </HStack>
             <HStack alignItems="start" textAlign="left">
               <Text fontWeight="bold">Production(s): </Text>
-              <Text>
-                Scott Rudin Productions, Trigger Street Productions, Michael De
-                Luca
-              </Text>
+              <Text>{data?.Production}</Text>
             </HStack>
           </Stack>
         </Stack>
         <Divider />
         <Stack py={6}>
           <Text fontWeight="bold">Synopsis</Text>
-          <Text>
-            On a fall night in 2003, Harvard undergrad and computer programming
-            genius Mark Zuckerberg sits down at his computer and heatedly begins
-            working on a new idea. In a fury of blogging and programming, what
-            begins in his dorm room soon becomes a global social network and a
-            revolution in communication. A mere six years and 500 million
-            friends later, Mark Zuckerberg is the youngest billionaire in
-            history... but for this entrepreneur, success leads to both personal
-            and legal complications.
-          </Text>
+          <Text>{data?.Plot}</Text>
         </Stack>
         <Divider />
         <Stack py={6} spacing={3}>
           <Text fontWeight="bold">Awards & Ratings</Text>
-          <Text>Won 3 Oscars. 172 wins & 186 nominations total</Text>
-          <HStack>
-            {["Internet Movie Database", "Rotten Tomatoes"].map((item) => (
-              <Tag key={item}>
-                {item}: {"7.7/10"}
+          <Text>{data?.Awards}</Text>
+          <Stack spacing={3} direction={{ base: "column", md: "row" }}>
+            {data?.Ratings.map((item) => (
+              <Tag key={item.Source}>
+                {item.Source}: {item.Value}
               </Tag>
             ))}
-          </HStack>
+          </Stack>
         </Stack>
       </Box>
     </Container>
   );
+
+  function _buildSkeleton() {
+    return (
+      <Container maxW="container.xl">
+        <Box py={3}>
+          <Stack spacing={6} direction={{ base: "column", md: "row" }} pb={6}>
+            <Skeleton height={{ base: 300, md: 360 }} />
+            <Stack>
+              <Skeleton height={78} />
+              <Skeleton height={360} />
+            </Stack>
+          </Stack>
+          <Divider />
+          <Stack py={6}>
+            <Skeleton height={200} />
+          </Stack>
+          <Divider />
+          <Stack py={6} spacing={3}>
+            <Skeleton height={144} />
+          </Stack>
+        </Box>
+      </Container>
+    );
+  }
 }
 
 export default connector(MovieDetailView);
