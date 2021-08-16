@@ -44,7 +44,9 @@ function Autocomplete({ data, getSuggestions }: PropsFromRedux) {
   };
 
   useEffect(() => {
-    getSuggestions(debounceKeyword);
+    if (debounceKeyword) {
+      getSuggestions(debounceKeyword);
+    }
   }, [debounceKeyword, getSuggestions]);
   return (
     <Popover

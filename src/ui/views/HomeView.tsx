@@ -8,13 +8,14 @@ import {
   Skeleton,
   Text,
 } from "@chakra-ui/react";
-import { getMovies } from "core/stores/actions/moviesAction";
+import { getMovies, fetchMoreMovies } from "core/stores/actions/moviesAction";
 import { IMoviesState } from "core/stores/reducers/moviesReducer";
 import { RootState } from "core/stores/store";
 import React, { useState } from "react";
 import { connect, ConnectedProps, MapStateToProps } from "react-redux";
 import Autocomplete from "ui/components/Autocomplete";
 import Card from "ui/components/Card";
+import InfiniteScroll from "ui/components/InfiniteScroll";
 
 interface IFormElements extends HTMLFormControlsCollection {
   keyword: HTMLInputElement;
@@ -30,26 +31,47 @@ const mapStateToProps: MapStateToProps<IMoviesState, {}, RootState> = (
 
 const mapDispatchToProps = {
   getMovies,
+  fetchMoreMovies,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-function HomeView({ data, isLoading, isError, getMovies }: PropsFromRedux) {
-  const [searchedKeyword, setSearchedKeyword] = useState("");
+function HomeView({
+  data,
+  total,
+  isLoading,
+  isFetchingMore,
+  isError,
+  getMovies,
+  fetchMoreMovies,
+}: PropsFromRedux) {
+  const [query, setQuery] = useState({
+    keyword: "",
+    page: 1,
+  });
+
+  const isAllMoviesShown = data.length >= total;
 
   const onSubmitForm = (event: React.FormEvent<IForm>) => {
     event.preventDefault();
 
     const { value } = event.currentTarget.elements.keyword;
 
-    setSearchedKeyword(value);
+    setQuery((prev) => ({ ...prev, keyword: value }));
 
     if (value) {
       getMovies(value);
       return;
     }
+  };
+
+  const onEndOfPage = () => {
+    const newPage = query.page + 1;
+    fetchMoreMovies(query.keyword, newPage);
+
+    setQuery((state) => ({ ...state, page: newPage }));
   };
 
   return (
@@ -69,10 +91,10 @@ function HomeView({ data, isLoading, isError, getMovies }: PropsFromRedux) {
           </Button>
         </HStack>
       </form>
-      {searchedKeyword ? (
+      {query.keyword ? (
         <Box>
           <Text pb={3}>
-            Showing results for keyword <Text as="b">"{searchedKeyword}"</Text>
+            Showing results for keyword <Text as="b">"{query.keyword}"</Text>
           </Text>
           {isLoading ? (
             _buildSkeleton()
@@ -92,25 +114,32 @@ function HomeView({ data, isLoading, isError, getMovies }: PropsFromRedux) {
 
   function _buildResult() {
     return (
-      <SimpleGrid
-        columns={{
-          base: 2,
-          md: 4,
-          lg: 5,
-        }}
-        spacing={3}
+      <InfiniteScroll
+        isLoading={isFetchingMore}
+        onBottomHit={onEndOfPage}
+        loadOnMount={false}
+        hasMoreData={!isAllMoviesShown}
       >
-        {data.map((item) => (
-          <Card
-            key={item.imdbID}
-            id={item.imdbID}
-            title={item.Title}
-            year={item.Year}
-            type={item.Type}
-            imageUrl={item.Poster}
-          />
-        ))}
-      </SimpleGrid>
+        <SimpleGrid
+          columns={{
+            base: 2,
+            md: 4,
+            lg: 5,
+          }}
+          spacing={3}
+        >
+          {data.map((item) => (
+            <Card
+              key={item.imdbID}
+              id={item.imdbID}
+              title={item.Title}
+              year={item.Year}
+              type={item.Type}
+              imageUrl={item.Poster}
+            />
+          ))}
+        </SimpleGrid>
+      </InfiniteScroll>
     );
   }
 

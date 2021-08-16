@@ -20,6 +20,7 @@ export interface IMoviesState {
   data: IMovieSummary[];
   isLoading: boolean;
   isError: boolean;
+  isFetchingMore: boolean;
   total: number;
 }
 
@@ -36,6 +37,7 @@ const initialState: IMoviesState = {
   data: [],
   isLoading: false,
   isError: false,
+  isFetchingMore: false,
   total: 0,
 };
 
@@ -63,8 +65,23 @@ function moviesReducer(
         isLoading: false,
       };
     case FETCH_MORE_MOVIES:
+      return {
+        ...state,
+        isFetchingMore: true,
+      };
     case FETCH_MORE_MOVIES_FINISHED:
+      return {
+        ...state,
+        data: [...state.data, ...action.payload?.data!],
+        total: action.payload?.total!,
+        isFetchingMore: false,
+      };
     case FETCH_MORE_MOVIES_ERROR:
+      return {
+        ...state,
+        isError: true,
+        isFetchingMore: false,
+      };
     default:
       return state;
   }

@@ -10,6 +10,7 @@ const initialState: IMoviesState = {
   isLoading: false,
   isError: false,
   total: 0,
+  isFetchingMore: false,
 };
 
 function suggestionReducer(
