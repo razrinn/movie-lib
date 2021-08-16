@@ -4,17 +4,16 @@ import {
   Container,
   Heading,
   HStack,
-  Input,
   SimpleGrid,
   Skeleton,
   Text,
 } from "@chakra-ui/react";
-import useDebounce from "core/hooks/useDebounce";
-import { getMovies } from "core/stores/actions/moviesActions";
+import { getMovies } from "core/stores/actions/moviesAction";
 import { IMoviesState } from "core/stores/reducers/moviesReducer";
 import { RootState } from "core/stores/store";
 import React, { useState } from "react";
 import { connect, ConnectedProps, MapStateToProps } from "react-redux";
+import Autocomplete from "ui/components/Autocomplete";
 import Card from "ui/components/Card";
 
 interface IFormElements extends HTMLFormControlsCollection {
@@ -37,24 +36,19 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-function HomeView({ data, isLoading, getMovies }: PropsFromRedux) {
-  const [keyword, setKeyword] = useState("");
+function HomeView({ data, isLoading, isError, getMovies }: PropsFromRedux) {
+  const [searchedKeyword, setSearchedKeyword] = useState("");
 
-  // const debounceKeyword = useDebounce(keyword, 500);
-
-  const onSubmit = (event: React.FormEvent<IForm>) => {
+  const onSubmitForm = (event: React.FormEvent<IForm>) => {
     event.preventDefault();
 
     const { value } = event.currentTarget.elements.keyword;
 
+    setSearchedKeyword(value);
+
     if (value) {
       getMovies(value);
-      setKeyword(value);
       return;
-    }
-
-    if (keyword) {
-      setKeyword(value);
     }
   };
 
@@ -62,9 +56,9 @@ function HomeView({ data, isLoading, getMovies }: PropsFromRedux) {
     <Container maxW="container.xl" py={3}>
       <Heading pb={3}>Welcome MovieLib!</Heading>
       <Text pb={3}>Enter keyword to start searching your favorite movie.</Text>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmitForm}>
         <HStack spacing={3} pb={6}>
-          <Input name="keyword" placeholder="Example: Avengers Endgame" />
+          <Autocomplete />
           <Button
             type="submit"
             loadingText="Searching"
@@ -75,16 +69,16 @@ function HomeView({ data, isLoading, getMovies }: PropsFromRedux) {
           </Button>
         </HStack>
       </form>
-      {keyword ? (
+      {searchedKeyword ? (
         <Box>
           <Text pb={3}>
-            Showing results for keyword <Text as="b">"{keyword}"</Text>
+            Showing results for keyword <Text as="b">"{searchedKeyword}"</Text>
           </Text>
           {isLoading ? (
             _buildSkeleton()
           ) : (
             <Box>
-              {true ? (
+              {!isError ? (
                 _buildResult()
               ) : (
                 <Text>No movie found. Please try another keyword.</Text>
@@ -102,7 +96,7 @@ function HomeView({ data, isLoading, getMovies }: PropsFromRedux) {
         columns={{
           base: 2,
           md: 4,
-          lg: 6,
+          lg: 5,
         }}
         spacing={3}
       >

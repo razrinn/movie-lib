@@ -10,7 +10,7 @@ import {
   Tag,
   Text,
 } from "@chakra-ui/react";
-import { getMovieDetail } from "core/stores/actions/movieActions";
+import { getMovieDetail } from "core/stores/actions/movieAction";
 import { IMovieState } from "core/stores/reducers/movieReducer";
 import { RootState } from "core/stores/store";
 import React from "react";

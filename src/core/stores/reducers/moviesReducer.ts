@@ -1,5 +1,8 @@
 import { FluxStandardAction } from ".";
 import {
+  FETCH_MORE_MOVIES,
+  FETCH_MORE_MOVIES_ERROR,
+  FETCH_MORE_MOVIES_FINISHED,
   FETCH_MOVIES,
   FETCH_MOVIES_ERROR,
   FETCH_MOVIES_FINISHED,
@@ -59,6 +62,9 @@ function moviesReducer(
         isError: true,
         isLoading: false,
       };
+    case FETCH_MORE_MOVIES:
+    case FETCH_MORE_MOVIES_FINISHED:
+    case FETCH_MORE_MOVIES_ERROR:
     default:
       return state;
   }

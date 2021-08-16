@@ -19,6 +19,9 @@ export const getMovies =
           s: keyword,
         },
       });
+      if (res.data.Error) {
+        throw Error;
+      }
       dispatch({
         type: FETCH_MOVIES_FINISHED,
         payload: {
