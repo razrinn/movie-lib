@@ -7,6 +7,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 1. Clone this repository
 2. In the root folder, there will be `.env.example` file. Rename it to `.env` and update the `REACT_APP_API_KEY` value.
 3. Install the project dependencies with your favorite package manager
+
    NPM
 
    ```sh
@@ -21,6 +22,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 4. (optional) Run test
 
+   NPM
+
    ```sh
    npm run test
    ```
@@ -32,6 +35,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
    ```
 
 5. Run the project
+
+   NPM
 
    ```sh
    npm run start
